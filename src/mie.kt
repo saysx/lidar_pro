@@ -1430,14 +1430,22 @@ object Hitran {
             if(readbhit(s,rh,lam) )
             {
                 //println(""+pTc[0].p+" "+pTc[0].T)
-
+                if(rh.moln<28)
                 for(j in 0..pTc.size-1) {
 
 
 
                     for (i in 0..lam.size - 1) {
                         val c = contour(rh, lam[i], pTc[j].p, pTc[j].T, pTc[j].c[rh.moln - 1], gasesHitM[rh.moln - 1])
+
+                        if(rh.iso<=0) rh.iso = 1
+
                         a[j].mol[rh.moln-1][i] +=  c*Giso[rh.moln-1][rh.iso-1]
+
+
+
+
+
                         a[j].all[i] +=  c * Giso[rh.moln - 1][rh.iso - 1] * pTc[j].c[rh.moln - 1]
 
                     }
@@ -1578,7 +1586,9 @@ class DIAL_IPDA()
 
 
         val n = (H*1e-3/dh).toInt()
-        val lam = arrayOf(1e+7/1572.018,1e+7/1572.19)
+        //val lam = arrayOf(1e+7/1572.018,1e+7/1572.19)
+        val lam = arrayOf(1e+7/2072.018,1e+7/2072.198)
+
         val h = makeh(H*1e-3,H*1e-3,-Math.PI/2,n)
         val sig =   calc_signal(1,lam,h,dh)
 
