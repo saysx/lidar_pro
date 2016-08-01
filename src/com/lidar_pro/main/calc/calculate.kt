@@ -1,7 +1,7 @@
-package calculate
+package com.lidar_pro.main.calc
 
-import maths.random
-import mie.AerosolModelIAO
+import com.lidar_pro.main.calc.random
+import com.lidar_pro.main.calc.AerosolModelIAO
 import java.io.FileWriter
 
 /**
@@ -24,7 +24,7 @@ open  class data(cn:String)
 
 
 
-    fun isconnect(x:data):Boolean = when(x)
+    fun isconnect(x: data):Boolean = when(x)
     {
         is data1d -> when(this) {is data1d -> true else -> false}
         is data2d -> when(this) {is data2d -> true else -> false}
@@ -42,32 +42,32 @@ open  class data(cn:String)
 }
 
 
-open class datad(cn:String):data(cn)
+open class datad(cn:String): data(cn)
 {
     open  var em:String = ""
     init { type = "Double" }
-    fun checkem(x:datad) =
+    fun checkem(x: datad) =
             if(x.em == this.em) true else false
 
 }
 
-open class datai(cn:String):data(cn)
+open class datai(cn:String): data(cn)
 {
     open  var em:String = ""
     init { type = "Integer" }
-    fun checkem(x:datai) =
+    fun checkem(x: datai) =
             if(x.em == this.em) true else false
 
 }
 
 
-open class datas(cn:String):data(cn)
+open class datas(cn:String): data(cn)
 {
     init { type = "String" }
 }
 
 
-class data0d(cn:String):datad(cn)
+class data0d(cn:String): datad(cn)
 {
     var d:Double = 0.0
     init {
@@ -77,7 +77,7 @@ class data0d(cn:String):datad(cn)
 
 }
 
-class data1d(cn:String):datad(cn)
+class data1d(cn:String): datad(cn)
 {
     var d:Array<Double> = Array<Double>(0,{0.0})
     init {
@@ -87,7 +87,7 @@ class data1d(cn:String):datad(cn)
 
 }
 
-class data2d(cn:String):datad(cn)
+class data2d(cn:String): datad(cn)
 {
     var d:Array<Array<Double>> = Array<Array<Double>>(0,{Array<Double>(0,{0.0})})
     init {
@@ -96,7 +96,7 @@ class data2d(cn:String):datad(cn)
 
 }
 
-class data0s(cn:String):datas(cn)
+class data0s(cn:String): datas(cn)
 {
     var d:String = ""
     init {
@@ -106,7 +106,7 @@ class data0s(cn:String):datas(cn)
 
 }
 
-class data0i(cn:String):datai(cn)
+class data0i(cn:String): datai(cn)
 {
     var d:Int = 0
     init {
@@ -117,12 +117,12 @@ class data0i(cn:String):datai(cn)
 }
 
 
-open class block(cdin:Array<data>,cdout:Array<data>)
+open class block(cdin:Array<data>, cdout:Array<data>)
 {
 
     var din:Array<data> = cdin
-    var pdin:Array<data> = Array<data>(cdin.size,{i->data0s("")})
-    var pbl:Array<block> = Array<block>(cdin.size,{i->block(arrayOf(),arrayOf())})
+    var pdin:Array<data> = Array<data>(cdin.size,{ i-> data0s("") })
+    var pbl:Array<block> = Array<block>(cdin.size,{ i-> block(arrayOf(), arrayOf()) })
     var dout:Array<data> = cdout
     var nin = cdin.size
     var nout = cdout.size
@@ -142,7 +142,7 @@ open class block(cdin:Array<data>,cdout:Array<data>)
         return true
     }
 
-    fun connect(cnin:Int,cnout:Int,tb:block):Boolean
+    fun connect(cnin:Int,cnout:Int,tb: block):Boolean
     {
         if(cnin<0) return false
         if(cnin>=nin) return false
@@ -198,14 +198,14 @@ open class block(cdin:Array<data>,cdout:Array<data>)
 class writedata1d: block
 {
 
-    constructor() : super(arrayOf(data1d(""),data0s("FileName")),arrayOf())
+    constructor() : super(arrayOf(data1d(""), data0s("FileName")),arrayOf())
     {name = "writedata1d"}
     override fun childexecute():Boolean {
 
 
         val val1 = true
-        val in1:data1d = pdin[0] as data1d
-        val in2:data0s = pdin[1] as data0s
+        val in1: data1d = pdin[0] as data1d
+        val in2: data0s = pdin[1] as data0s
         val f = FileWriter(in2.d)
 
 
@@ -227,14 +227,14 @@ class writedata1d: block
 class writedata2d: block
 {
 
-    constructor() : super(arrayOf(data2d(""),data0s("FileName")),arrayOf())
+    constructor() : super(arrayOf(data2d(""), data0s("FileName")),arrayOf())
     {name = "writedata2d"}
     override fun childexecute():Boolean {
 
 
         val val1 = true
-        val in1:data2d = pdin[0] as data2d
-        val in2:data0s = pdin[1] as data0s
+        val in1: data2d = pdin[0] as data2d
+        val in2: data0s = pdin[1] as data0s
         val f = FileWriter(in2.d)
 
         var min:Int = in1.d[0].size
@@ -270,10 +270,10 @@ class randomvecd: block
     override fun childexecute():Boolean
     {
         val val1 = true
-        val in1:data0i  = pdin[0] as data0i
-        val o1:data1d  = dout[0] as data1d
+        val in1: data0i = pdin[0] as data0i
+        val o1: data1d = dout[0] as data1d
         println("randsize =  "+in1.d)
-        o1.d = Array<Double>(in1.d,{i->random()})
+        o1.d = Array<Double>(in1.d,{i-> random() })
         return val1
 
     }
@@ -292,7 +292,7 @@ class intconst: block
     }
     override fun childexecute():Boolean {
         println(name)
-        val o1:data0i  = dout[0] as data0i
+        val o1: data0i = dout[0] as data0i
         o1.d = value
 
         return true
@@ -311,7 +311,7 @@ class doubleconst: block
     }
     override fun childexecute():Boolean {
         println(name)
-        val o1:data0d  = dout[0] as data0d
+        val o1: data0d = dout[0] as data0d
         o1.d = value
 
         return true
@@ -330,7 +330,7 @@ class stringconst: block
         name = "stringconst"
     }
     override fun childexecute():Boolean {
-        val o1:data0s  = dout[0] as data0s
+        val o1: data0s = dout[0] as data0s
         o1.d = value
         return true
     }
@@ -339,7 +339,7 @@ class stringconst: block
 }
 
 
-class concatvectors:block
+class concatvectors: block
 {
     constructor() : super(arrayOf(data1d("vector 1"),
             data1d("vector 2")),
@@ -349,9 +349,9 @@ class concatvectors:block
 
     }
     override fun childexecute():Boolean {
-        val o1:data2d  = dout[0] as data2d
-        val i1:data1d  = pdin[0] as data1d
-        val i2:data1d  = pdin[1] as data1d
+        val o1: data2d = dout[0] as data2d
+        val i1: data1d = pdin[0] as data1d
+        val i2: data1d = pdin[1] as data1d
 
 
         o1.d=arrayOf()
@@ -362,7 +362,7 @@ class concatvectors:block
 
 }
 
-class concatvecmatr:block
+class concatvecmatr: block
 {
     constructor() : super(arrayOf(data2d("matrix 1"),
             data1d("vector 1")),
@@ -372,9 +372,9 @@ class concatvecmatr:block
 
     }
     override fun childexecute():Boolean {
-        val o1:data2d  = dout[0] as data2d
-        val i1:data2d  = pdin[0] as data2d
-        val i2:data1d  = pdin[1] as data1d
+        val o1: data2d = dout[0] as data2d
+        val i1: data2d = pdin[0] as data2d
+        val i2: data1d = pdin[1] as data1d
 
 
         o1.d = i1.d+i2.d
@@ -386,20 +386,20 @@ class concatvecmatr:block
 
 
 
-class makevec:block
+class makevec: block
 {
     constructor() : super(arrayOf(data0d("a border"),
-            data0d("b border"),data0i("Size of vector")),
+            data0d("b border"), data0i("Size of vector")),
             arrayOf(data1d("DoubleVector")))
     {
         name = "aerextvec"
 
     }
     override fun childexecute():Boolean {
-        val o1:data1d  = dout[0] as data1d
-        val i1:data0d  = pdin[0] as data0d
-        val i2:data0d  = pdin[1] as data0d
-        val i3:data0i  = pdin[2] as data0i
+        val o1: data1d = dout[0] as data1d
+        val i1: data0d = pdin[0] as data0d
+        val i2: data0d = pdin[1] as data0d
+        val i3: data0i = pdin[2] as data0i
         val h = (i2.d-i1.d)/i3.d
         o1.d = Array<Double>(i3.d,{i->i1.d+h*i})
         return true
@@ -414,22 +414,22 @@ class makevec:block
 
 
 
-class aerextvec:block
+class aerextvec: block
 {
-    constructor() : super(arrayOf(data0d("Height in [km]"),data1d("Wavelength Vector in [mkm]")),
+    constructor() : super(arrayOf(data0d("Height in [km]"), data1d("Wavelength Vector in [mkm]")),
                      arrayOf(data1d("Aerosol Extinction in [km-1]")))
     {
        name = "aerextvec"
 
     }
     override fun childexecute():Boolean {
-        val o1:data1d  = dout[0] as data1d
-        val i1:data0d  = pdin[0] as data0d
-        val i2:data1d  = pdin[1] as data1d
+        val o1: data1d = dout[0] as data1d
+        val i1: data0d = pdin[0] as data0d
+        val i2: data1d = pdin[1] as data1d
 
 
         println(i2.d.size)
-        o1.d = Array<Double>(i2.d.size,{i->AerosolModelIAO.getext(i2.d[i],0.0,0.0,i1.d)})
+        o1.d = Array<Double>(i2.d.size,{i-> AerosolModelIAO.getext(i2.d[i],0.0,0.0,i1.d)})
 
         return true
     }
@@ -441,7 +441,7 @@ class aerextvec:block
 class blocks()
 {
     var listb:Array<block> = arrayOf()
-    fun addblock(bl:block)
+    fun addblock(bl: block)
     {
         listb = listb+bl
         listb[listb.size-1].index = listb.size-1
@@ -453,7 +453,7 @@ class blocks()
 
     }
 
-    fun connect(blin:block,cin:Int,blout:block,cout:Int):Boolean
+    fun connect(blin: block, cin:Int, blout: block, cout:Int):Boolean
     {
         return blin.connect(cin,cout,blout)
 

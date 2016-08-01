@@ -1,7 +1,7 @@
 /**
  * Created by say on 06.01.16.
  */
-package maths
+package com.lidar_pro.main.calc
 fun sin(v:Double): Double = Math.sin(v)
 fun cos(v:Double): Double = Math.cos(v)
 fun tan(v:Double): Double = Math.tan(v)
@@ -36,22 +36,22 @@ fun exponent(v:Double): Int = Math.getExponent(v)
 fun next(v:Double,direction: Double): Double = Math.nextAfter(v, direction)
 fun nextUp(v:Double): Double = Math.nextUp(v)
 fun scalb(v:Double,scaleFactor: Int): Double = Math.scalb(v, scaleFactor)
-fun exp(c:Complex):Complex = c.exp()
-fun pow(c:Complex,d:Complex) = c.pow(d)
-fun pow(c:Complex,d:Double) = c.pow(d)
-fun ln(c:Complex) = c.ln()
+fun exp(c: Complex): Complex = c.exp()
+fun pow(c: Complex, d: Complex) = c.pow(d)
+fun pow(c: Complex, d:Double) = c.pow(d)
+fun ln(c: Complex) = c.ln()
 fun random():Double = Math.random()
-operator fun Double.div(c:Complex): Complex = Complex(this,0.0)/c
-operator fun Int.div(c:Complex): Complex = Complex(this.toDouble(),0.0)/c
-operator fun Double.times(c:Complex): Complex = c*this
-fun Double.toComplex() = Complex(this,0.0)
+operator fun Double.div(c: Complex): Complex = Complex(this, 0.0) /c
+operator fun Int.div(c: Complex): Complex = Complex(this.toDouble(), 0.0) /c
+operator fun Double.times(c: Complex): Complex = c*this
+fun Double.toComplex() = Complex(this, 0.0)
 fun max(x:Double,y:Double):Double = if(x<y) y else x
 fun max(x:Int,y:Int):Int = if(x<y) y else x
-fun abs(x:Complex):Double = x.module()
-fun real(x:Complex):Double = x.re
+fun abs(x: Complex):Double = x.module()
+fun real(x: Complex):Double = x.re
 fun sqr(x:Double):Double = x*x
 fun sqr(x:Int):Int = x*x
-fun fact(n:Int):Int = if(n<=0) 1 else n*fact(n-1)
+fun fact(n:Int):Int = if(n<=0) 1 else n* fact(n - 1)
 
 abstract class function() {
      abstract fun func(x: Double): Double
@@ -63,7 +63,7 @@ fun normmatrix(xx:Array<Array<Double>>):Double
     var norm = 0.0
     for(i in 0..xx.size-1)
         for(j in 0..xx[i].size-1)
-            norm+=abs(xx[i][j])
+            norm+= abs(xx[i][j])
     return norm/(xx.size)
 }
 fun normalizematrix(xx:Array<Array<Double>>):Array<Array<Double>>
@@ -102,10 +102,10 @@ fun lsgaus2(a:Array<Array<Double>>,b:Array<Array<Double>>):Array<Array<Double>>
     var maxa:Double
     val precise = 1e-24
     val x:Array<Array<Double>> = Array(n,{Array(n,{0.0})})
-    maxa=abs(a[0][0])
+    maxa= abs(a[0][0])
     for(i in 0..n-1)
     for(j in 0..n-1)
-        if(maxa<abs(a[i][j])) maxa=abs(a[i][j])
+        if(maxa< abs(a[i][j])) maxa= abs(a[i][j])
 
     fl=true
     numfl=1.0
@@ -123,7 +123,7 @@ fun lsgaus2(a:Array<Array<Double>>,b:Array<Array<Double>>):Array<Array<Double>>
         for(i in 0..n-2)
         {
 
-            if(abs(aa[i][i])<precise)
+            if(abs(aa[i][i]) <precise)
             {
 
                 for(k in 0..n-1)
@@ -133,7 +133,7 @@ fun lsgaus2(a:Array<Array<Double>>,b:Array<Array<Double>>):Array<Array<Double>>
                     aa[i][j]=aa[i][j]+aa[k][j]
                     for(j in 0..n-1)
                     bb[i][j]=bb[i][j]+bb[k][j]
-                    if(abs(aa[i][i])>precise) break
+                    if(abs(aa[i][i]) >precise) break
                 }
             }
 
@@ -162,8 +162,8 @@ fun lsgaus2(a:Array<Array<Double>>,b:Array<Array<Double>>):Array<Array<Double>>
         }
     }
 
-      val m = mulmatrix(a,x)
-        printmatrix(m)
+      val m = mulmatrix(a, x)
+    printmatrix(m)
 
         numfl=numfl*10
     //}
@@ -181,7 +181,7 @@ fun inversematrix(a:Array<Array<Double>>):Array<Array<Double>>
     var b:Array<Array<Double>>
     for(j in 0..n-1)
     v[j][j]=1.0
-    b= lsgaus2(a,v);
+    b= lsgaus2(a, v);
 
 
     for(i in 0..n-1)
@@ -195,7 +195,7 @@ fun inversematrix(a:Array<Array<Double>>):Array<Array<Double>>
     for(i in 0..n-1)
     for(j in 0..n-1)
     {
-        if(i==j) d=d+abs(c[i][j]-1) else d=d+abs(c[i][j])
+        if(i==j) d=d+ abs(c[i][j] - 1) else d=d+ abs(c[i][j])
     }
     return b
 
@@ -241,7 +241,7 @@ fun transp(a:Array<Array<Double>>):Array<Array<Double>>
     return b
 }
 
-fun integrate1(c:function,a:Double,b:Double,fa:Double,fb:Double,e:Double):Double
+fun integrate1(c: function, a:Double, b:Double, fa:Double, fb:Double, e:Double):Double
 {
 
     //if((b-a)<e) return (c.func(a)+c.func(b))*(b-a)*0.5
@@ -259,14 +259,14 @@ fun integrate1(c:function,a:Double,b:Double,fa:Double,fb:Double,e:Double):Double
     val i2 = (fa+fb+fx*2)*dx2*0.5
     val dx3 = x2-x
     val i3 = (fa+2*fx1+2*fx+2*fx2+fb)*dx3*0.5
-    val er = abs(i3-i1)+abs(i2-i1)+abs(i3-i2)
+    val er = abs(i3 - i1) + abs(i2 - i1) + abs(i3 - i2)
     if(er/(i3)<e) return i3
-    else return integrate1(c,a,x1,fa,fx1,e)+integrate1(c,x1,x,fx1,fx,e)+
-            integrate1(c,x,x2,fx,fx2,e)+integrate1(c,x2,b,fx2,fb,e)
+    else return integrate1(c, a, x1, fa, fx1, e) + integrate1(c, x1, x, fx1, fx, e) +
+            integrate1(c, x, x2, fx, fx2, e) + integrate1(c, x2, b, fx2, fb, e)
 
 
 }
-fun integrate(c:function,a:Double,b:Double,e:Double):Double = integrate1(c,a,b,c.func(a),c.func(b),e)
+fun integrate(c: function, a:Double, b:Double, e:Double):Double = integrate1(c, a, b, c.func(a), c.func(b), e)
 
 
 
@@ -283,18 +283,18 @@ class Complex(var re: Double, var im: Double) {
     constructor(re: Long) : this(re.toDouble(), 0.0)
     constructor(re: Short) : this(re.toDouble(), 0.0)
     // Unary operators
-    fun exp(x:Complex):Complex = Complex(re, -im) // conjugate
+    fun exp(x: Complex): Complex = Complex(re, -im) // conjugate
     fun module():Double = sqrt(pow(re, 2) + pow(im, 2))
     // Comparison
     operator fun compareTo(that: Complex) = this.module().compareTo(that.module())
 
     // Arithmetic operations
-    fun pow(c:Complex):Complex = (c*this.ln()).exp()
-    fun pow(c:Double):Complex = (this.ln()*c).exp()
+    fun pow(c: Complex): Complex = (c*this.ln()).exp()
+    fun pow(c:Double): Complex = (this.ln()*c).exp()
 
-    fun exp():Complex  {
+    fun exp(): Complex {
         val r: Double = exp(this.re)
-        return Complex(r*cos(this.im),r*sin(this.im))
+        return Complex(r * cos(this.im), r * sin(this.im))
     }
 
     fun arg(): Double {
@@ -307,22 +307,22 @@ class Complex(var re: Double, var im: Double) {
             else ->  0.0
         }
     }
-    fun ln():Complex  {
+    fun ln(): Complex {
 
-        return Complex(log(this.module()),arg())
+        return Complex(log(this.module()), arg())
     }
 
-    operator fun plus(c: Complex):Complex = Complex(re + c.re, im + c.im)
-    operator fun minus(c: Complex):Complex = Complex(re-c.re,im-c.im)
-    operator fun plus(c: Double):Complex = Complex(re + c, im)
-    operator fun minus(c: Double):Complex = Complex(re - c, im)
-    operator fun times(c: Complex):Complex =Complex(re * c.re - im * c.im, im * c.re + re * c.im)
-    operator fun times(d: Double):Complex =Complex(re * d, im * d )
-    operator fun div(c: Complex):Complex {
+    operator fun plus(c: Complex): Complex = Complex(re + c.re, im + c.im)
+    operator fun minus(c: Complex): Complex = Complex(re - c.re, im - c.im)
+    operator fun plus(c: Double): Complex = Complex(re + c, im)
+    operator fun minus(c: Double): Complex = Complex(re - c, im)
+    operator fun times(c: Complex): Complex = Complex(re * c.re - im * c.im, im * c.re + re * c.im)
+    operator fun times(d: Double): Complex = Complex(re * d, im * d)
+    operator fun div(c: Complex): Complex {
         val d = pow(c.re, 2) + pow(c.im, 2)
         return Complex((re * c.re + im * c.im) / d, (im * c.re - re * c.im) / d)
     }
-    operator fun div(c: Double):Complex  = Complex(re / c, im / c)
+    operator fun div(c: Double): Complex = Complex(re / c, im / c)
 
 
 
@@ -337,14 +337,14 @@ class Complex(var re: Double, var im: Double) {
 
     // Factory methods
     fun apply(re: Double) = Complex(re)
-    fun ln(c:Complex):Complex = c.ln()
+    fun ln(c: Complex): Complex = c.ln()
 
     // Implicit conversions
-    fun fromDouble(d: Double):Complex = Complex(d)
-    fun fromFloat(f: Float):Complex =  Complex(f)
-    fun fromLong(l: Long):Complex =  Complex(l)
-    fun fromInt(i: Int):Complex =  Complex(i)
-    fun fromShort(s: Short):Complex =  Complex(s)
+    fun fromDouble(d: Double): Complex = Complex(d)
+    fun fromFloat(f: Float): Complex = Complex(f)
+    fun fromLong(l: Long): Complex = Complex(l)
+    fun fromInt(i: Int): Complex = Complex(i)
+    fun fromShort(s: Short): Complex = Complex(s)
 
 
 }
@@ -450,7 +450,7 @@ fun Array<Array<Double>>.getxy(x:Double,y:Double,ax:Double,hx:Double,ay:Double,h
 
 
 
-fun Array<Double>.getx(x:Double,a:Double,h:Double):Double
+fun Array<Double>.getx(x: Double, a: Double, h: Double): Double
 {
     var i = ((x-a)/h).toInt()
 
@@ -464,3 +464,13 @@ fun Array<Double>.getx(x:Double,a:Double,h:Double):Double
     return (aa*x+b)
 }
 
+fun mkm_to_cm(d: Double): Double {
+    var dd: Double = d
+    dd = 10000 / dd
+    return dd
+}
+fun cm_to_mkm(d: Double): Double {
+    var dd: Double = d
+    dd = 10000 / dd
+    return dd
+}

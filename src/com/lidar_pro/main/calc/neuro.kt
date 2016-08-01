@@ -1,8 +1,10 @@
 /**
  * Created by say on 08.04.16.
  */
-package neuro
-import maths.*
+package com.lidar_pro.main.calc
+
+import com.lidar_pro.main.calc.*
+
 
 open class activation
 {
@@ -12,17 +14,17 @@ open class activation
 
 }
 
-class logisticact:activation()
+class logisticact: activation()
 {
-    override fun act(g:Double):Double = 1/(exp(-g)+1)
-    override fun difact(g:Double):Double = sqr(act(g))*exp(-g)
-    override fun invact(g:Double):Double =-log(1/g-1) //if(g<=0.001) -log(1/0.001-1) else if(g>=0.999) -log(1/0.999-1) else -log(1/g-1)
+    override fun act(g:Double):Double = 1/(exp(-g) +1)
+    override fun difact(g:Double):Double = sqr(act(g)) * exp(-g)
+    override fun invact(g:Double):Double =-log(1 / g - 1) //if(g<=0.001) -log(1/0.001-1) else if(g>=0.999) -log(1/0.999-1) else -log(1/g-1)
 }
 
-class neuron(cn:Int,caf:activation) {
-    val af:activation = caf
+class neuron(cn:Int,caf: activation) {
+    val af: activation = caf
     var n:Int = cn
-    var w:Array<Double> = Array<Double>(n,{(random()-0.5)*0.01})
+    var w:Array<Double> = Array<Double>(n,{(random() -0.5)*0.01})
     var y = 0.0
     var s = 0.0
     fun ask(x:Array<Double>):Double {
@@ -48,9 +50,9 @@ class trainset(ntr:Int,cnin:Int,cnout:Int)
 
 }
 
-class inversetrain(nen:Int,nout:Int,nexmpl:Int,caf:activation)
+class inversetrain(nen:Int,nout:Int,nexmpl:Int,caf: activation)
 {
-    var w:Array<Array<Double>>  = Array(nout,{Array(nen,{(random()-0.5)*0.001})})
+    var w:Array<Array<Double>>  = Array(nout,{Array(nen,{(random() -0.5)*0.001})})
     val x:Array<Array<Double>> =  Array(nen,{Array(nexmpl,{0.0})})
     val af = caf
     var s1:Array<Double> = Array(nen,{0.0})
@@ -59,16 +61,16 @@ class inversetrain(nen:Int,nout:Int,nexmpl:Int,caf:activation)
     val nx = nen
     fun asky(x:Array<Double>):Array<Double>
     {
-        val y = fvector(mulvector(w,x))
+        val y = fvector(mulvector(w, x))
         return y
 
     }
 
     fun askxyx(x:Array<Double>):Array<Double>
     {
-        s2 = mulvector(w,x)
+        s2 = mulvector(w, x)
         val y = fvector(s2)
-        s1 = mulvector(transp(w),y)
+        s1 = mulvector(transp(w), y)
         val xx = fvector(s1)
         return xx
 
@@ -77,9 +79,9 @@ class inversetrain(nen:Int,nout:Int,nexmpl:Int,caf:activation)
 
     fun ask(x:Array<Double>):Array<Double>
     {
-        val d1 = mulvector(w,x)
+        val d1 = mulvector(w, x)
         val y = fvector(d1)
-        val d2 = mulvector(transp(w),y)
+        val d2 = mulvector(transp(w), y)
         val xx = fvector(d2)
         return xx
 
@@ -121,9 +123,9 @@ class inversetrain(nen:Int,nout:Int,nexmpl:Int,caf:activation)
         for(i in 0..nexampl-1)
         {
 
-            val xx=ask(getvector(x,i))
+            val xx=ask(getvector(x, i))
             for(j in 0..nx-1)
-                v=v+abs(xx[j]-x[j][i])
+                v=v+ abs(xx[j] - x[j][i])
         }
 
         return v
@@ -142,7 +144,7 @@ class inversetrain(nen:Int,nout:Int,nexmpl:Int,caf:activation)
     fun gradientlearn(al:Double,num:Int)
     {
         val dw:Array<Array<Double>> = Array(w.size,{i->Array(w[i].size,{0.0})})
-        val xr = getvector(x,num)
+        val xr = getvector(x, num)
         val xv = askxyx(xr)
 
         for(l in 0..w.size-1)
@@ -176,24 +178,24 @@ class inversetrain(nen:Int,nout:Int,nexmpl:Int,caf:activation)
         val wt = mulmatrix(p1,inversematrix(mulmatrix(y,yt)))
         w = transp(wt)*/
 
-        val fiy = mulmatrix(w,x)
+        val fiy = mulmatrix(w, x)
         val xt = transp(x)
-        val mxxt= mulmatrix(x,xt)
-        val mxxti =inversematrix(mxxt)
-        val xtx= mulmatrix(xt,mxxti)
-        w = (mulmatrix(fiy,xtx))
+        val mxxt= mulmatrix(x, xt)
+        val mxxti = inversematrix(mxxt)
+        val xtx= mulmatrix(xt, mxxti)
+        w = (mulmatrix(fiy, xtx))
 
 
-        val y = fmatrix(mulmatrix(w,x))
+        val y = fmatrix(mulmatrix(w, x))
         val yt = transp(y)
-        val myyt = mulmatrix(y,yt)
+        val myyt = mulmatrix(y, yt)
 
         val myyti = inversematrix(myyt)
 
 
-        val yty = mulmatrix(yt,myyti)
+        val yty = mulmatrix(yt, myyti)
         val fix = finvmatrix(x)
-        val wt = mulmatrix(fix,yty)
+        val wt = mulmatrix(fix, yty)
         val w = (transp(wt))
         //for(i in 0..ww.size-1)
         //    for(j in 0..ww[i].size-1)
@@ -227,12 +229,12 @@ open class neuronet(cnin:Int)
     {
         n = cn
         net = Array<Array<neuron>>(n.size,{arrayOf()})
-        net[0] = Array<neuron>(n[0],{neuron(nin,caf[0])})
+        net[0] = Array<neuron>(n[0],{ neuron(nin, caf[0]) })
         val l = n.size-1
-        net[l] = Array<neuron>(n[l],{neuron(n[l-1],caf[l])})
+        net[l] = Array<neuron>(n[l],{ neuron(n[l - 1], caf[l]) })
         for(i in 1..l-1)
         {
-            net[i] = Array<neuron>(n[i],{neuron(n[i-1],caf[i])})
+            net[i] = Array<neuron>(n[i],{ neuron(n[i - 1], caf[i]) })
 
         }
         nout = n[l]
@@ -264,7 +266,7 @@ open class neuronet(cnin:Int)
 
 }
 
-open class backppg(cnin:Int,n:Array<Int>,caf:Array<activation>):neuronet(cnin,n,caf)
+open class backppg(cnin:Int,n:Array<Int>,caf:Array<activation>): neuronet(cnin,n,caf)
 {
     val sg:Array<Array<Double>> = Array(n.size,{i->Array(n[i],{0.0})})
     var al = 0.01
@@ -317,12 +319,12 @@ open class backppg(cnin:Int,n:Array<Int>,caf:Array<activation>):neuronet(cnin,n,
 
 }
 
-class prelearngradient(cnin:Int,n:Array<Int>,caf:Array<activation>,l:trainset):backppg(cnin,n,caf)
+class prelearngradient(cnin:Int, n:Array<Int>, caf:Array<activation>, l: trainset): backppg(cnin,n,caf)
 {
     lateinit var encoders:Array<inversetrain>
     init {
 
-        encoders = arrayOf(inversetrain(nin+nout,n[0],l.ntrain,af[0]))+Array(n.size-1,{i->inversetrain(n[i],n[i+1],l.ntrain,af[i])})
+        encoders = arrayOf(inversetrain(nin + nout, n[0], l.ntrain, af[0]))+Array(n.size-1,{ i-> inversetrain(n[i], n[i + 1], l.ntrain, af[i]) })
 
         for(i in 0..l.ntrain-1) {
             for (j in 0..nin - 1)
@@ -335,7 +337,7 @@ class prelearngradient(cnin:Int,n:Array<Int>,caf:Array<activation>,l:trainset):b
 
         var ans:Array<Array<Double>> = Array(l.ntrain,{Array(0,{0.0})})
         for(i in 0..l.ntrain-1)
-          ans[i]=encoders[0].asky(getvector(encoders[0].x,i))
+          ans[i]=encoders[0].asky(getvector(encoders[0].x, i))
 
         for(j in 1..encoders.size-1)
         {
@@ -348,7 +350,7 @@ class prelearngradient(cnin:Int,n:Array<Int>,caf:Array<activation>,l:trainset):b
                 encoders[j].x[i][k]= ans[k][i]
                encoders[j].gradientbatch(0.1,10000)
                for(i in 0..l.ntrain-1)
-               ans[i]=encoders[j].asky(getvector(encoders[j].x,i))
+               ans[i]=encoders[j].asky(getvector(encoders[j].x, i))
         }
 
         for(i in 0..n.size-2)

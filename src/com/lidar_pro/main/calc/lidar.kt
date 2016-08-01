@@ -1,45 +1,74 @@
 /**
  * Created by say on 06.01.16.
  */
-package demo
+package com.lidar_pro.main.calc
 
-import mie.DIAL_IPDA
+import com.lidar_pro.main.Helpers.GlobalVars
+import com.lidar_pro.main.Helpers.GlobalVars.*
+import com.lidar_pro.main.calc.DIAL_IPDA
+import com.lidar_pro.main.calc.Hitran
+import java.io.FileWriter
 
-data class vas(val v1:Double,val v2:Double)
-{
+data class vas(val v1: Double, val v2: Double) {
 
 }
 
-
-fun ret():Array<vas>
-{
-
-    return arrayOf(vas(2.0,2.0))
+fun ret() : Array<vas> {
+    return arrayOf(vas(2.0, 2.0))
 }
 
-fun main(args : Array<String>) {
-    val today = java.lang.System.currentTimeMillis()
+fun calc_absorption_spectre(start_point_cm: Double, step: Int) {
+
+    val pTc : Array<Hitran.tpTc> = Hitran.makeatm(arrayOf(0.0, 1.0, 2.0))
+
+    var end_point_cm = start_point_cm + step.toDouble() / 100.0
+
+    println("Generating absorption spectre... Wavelengths: " + start_point_cm + "(" + cm_to_mkm(start_point_cm) + ")" + "-" + end_point_cm + "(" + cm_to_mkm(end_point_cm) + ")\n" + "Step: " + step)
+
+    //println("Pressure of gases: ")
+    pTc[0].c[0] = pTc[0].c[0] * 2.0
+    /*for(i in 0 .. 26)
+        println("Gas #" + i.toString() + " = " + (pTc[0].c[i] * 100) )*/
+
+    val lam = Array<Double>(step, { i -> start_point_cm + i.toDouble() / 100.0 })
+    val c = Hitran.getallabsorptionpt(lam, 0.001, pTc)
+
+    GlobalVars.abs_fileName = "gen/abs_" + start_point_cm + "(" + cm_to_mkm(start_point_cm) + ")" + "-" + end_point_cm + "(" + cm_to_mkm(end_point_cm) + ")_" + abs_plugin_suffix + fileExtension_dat
+    val f = FileWriter(GlobalVars.abs_fileName)
+
+    println("Saving " + c[0].all.size + " lines to file...")
+    for(i in 0 .. c[0].all.size - 1)
+        f.write("" + lam[i] + "  " + c[0].all[i] + "\r\n")
+    f.close()
+
+    GlobalVars.abs_ms_fileName = "gen/abs_ms_" + start_point_cm + "(" + cm_to_mkm(start_point_cm) + ")" + "-" + end_point_cm + "(" + cm_to_mkm(end_point_cm) + ")_" + abs_plugin_suffix + fileExtension_dat
+    val f_ms = FileWriter(GlobalVars.abs_ms_fileName)
+    f_ms.write(GlobalVars.spectreMols_text);
+    f_ms.close();
+}
 
 
+fun calc_dial_snr(lam1: Double, lam2: Double, height: Int) { // just in case
+    val di: DIAL_IPDA = DIAL_IPDA()
+    di.calc_snr(lam1, lam2, height, 8) //(lam1 - off, lam2 - on); 8 - default smoothing value
+}
+fun calc_dial_snr(lam1: Double, lam2: Double, height: Int, smoot_coef: Int) {
+    val di: DIAL_IPDA = DIAL_IPDA()
+    di.calc_snr(lam1, lam2, height, smoot_coef) //(lam1 - off, lam2 - on)
+}
 
-    /*val pTc:Array<Hitran.tpTc> = Hitran.makeatm(arrayOf(0.0,1.0,2.0))
+fun lidar() {
 
-    println("Pressure of gases - ")
-    pTc[0].c[0] =pTc[0].c[0]*2.0
-    for(i in 0..26)
-        println(pTc[0].c[i]*100)
+    val today = System.currentTimeMillis()
 
-    val lam = Array<Double>(1000,{i->10000.0+i.toDouble()/100.0})
-    val c = Hitran.getallabsorptionpt(lam,1,0.001,pTc)
-    val f = FileWriter("dat1/f.dat")
+    // Расчет спектров поглощения (1):
+    /*val step = 100
+    var start_point_cm = 5939.33
 
-    println(c[0].all.size)
-    for(i in 0..c[0].all.size-1)
-      f.write(""+lam[i]+"  "+c[0].all[i]+"\r\n")
+    calc_absorption_spectre(start_point_cm, step)*/
 
-    f.close()*/
 
-    val di:DIAL_IPDA = DIAL_IPDA()
+    // ?:
     /*val h = di.makeh(0.0,100.0,Math.PI/2,200)
     println("height == == ="+h[0])
     println("height == == ="+h[1])
@@ -47,7 +76,7 @@ fun main(args : Array<String>) {
     val lam = Array(200,{i->10000.0*1e+3/(1571.8+i*0.5/200)})
     val sig = di.calc_signal(1,lam,h,0.5)
 
-    val f = FileWriter("dat1/f.dat")
+    val f = FileWriter("gen/f.dat")
 
     var srex = 0.0
     for(i in 0..sig.size-1) {
@@ -79,13 +108,20 @@ fun main(args : Array<String>) {
     println(Sp)
     println(Pb)*/
 
-    di.calc_snr()
+
+    // Расчет SNR:
+    val di: DIAL_IPDA = DIAL_IPDA()
+    var lam1 = 1650.865586001462
+    var lam2 = 1650.9555276883962
+
+    di.calc_snr(lam1, lam2, 23, 8) //(lam1 - off, lam2 - on)
+
 
 
     //Hitran.getabsorption(arrayOf(10000.0,10010.0),1,0.1)
-   /* val b: blocks = blocks()
+    /* val b: blocks = blocks()
     val wr2: writedata2d = writedata2d()
-    val str: stringconst = stringconst("dat1/FileName0.dat")
+    val str: stringconst = stringconst("gen/FileName0.dat")
     val intv: intconst = intconst(200)
     val doublev1: doubleconst = doubleconst(3000.0)
     val doublev2: doubleconst = doubleconst(4000.0)
@@ -121,7 +157,7 @@ fun main(args : Array<String>) {
 
     b.listb[0].calculate()
 
-*/
+    */
     /*val act:logisticact = logisticact()
     val nt: backppg =  backppg(2,arrayOf(10,10,1),arrayOf(act,act,act))
     val n = 100
@@ -155,7 +191,7 @@ fun main(args : Array<String>) {
      inv.x[2][i] =inv.x[1][i]*inv.x[0][i]
     }
 
-   // for(i in 0..60)
+    // for(i in 0..60)
        // inv.learnstep()
 
 
@@ -168,7 +204,7 @@ fun main(args : Array<String>) {
         println(" " + inv.x[i][0]+ "   "+xx[i] )
         */
 
-  /*  val train: trainset = trainset(100,3,3)
+    /*  val train: trainset = trainset(100,3,3)
     for(i in 0..train.ntrain-1)
     {
         train.set[i][0][0] = random()
@@ -199,9 +235,6 @@ fun main(args : Array<String>) {
         println("y = " + y[2] + "  " + train.set[i][1][2])
     }*/
 
-
     val tm = System.currentTimeMillis() - today
-        println(tm)
-
-
-    }
+    println("Estimated time: " + tm)
+}
